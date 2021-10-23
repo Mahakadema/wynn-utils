@@ -1,0 +1,17 @@
+{
+  "name": "wynn-utils",
+  "version": "0.0.1",
+  "description": "A collection of useful tools for Wynncraft",
+  "main": "main.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mahakadema/wynn-utils.git"
+  },
+  "author": "Mahakadema",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mahakadema/wynn-utils/issues"
+  },
+  "homepage": "https://github.com/Mahakadema/wynn-utils#readme"
+}
