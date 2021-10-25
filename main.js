@@ -26,20 +26,13 @@ for (const moduleName of moduleFiles) {
 }
 
 util.log(`§FWelcome to ${util.package.name} v${util.package.version}`, "INFO", "MAIN");
-util.log(`§FType "module_name [arguments] to activate a module. Currently available modules:"`, "INFO", "MAIN");
+util.log(`§FType "module_name [arguments]" to activate a module. Currently available modules:`, "INFO", "MAIN");
 for (const module of modules.values()) {
     util.log(`§F\n * ${module.name}\n   - Description: ${module.description}\n   - Syntax: ${module.name} ${module.syntax}\n   - Examples:${module.examples.reduce((p, c) => p + `\n     - ${module.name} ${c}`, "")}, `, "INFO", "MAIN");
 }
 
 // IO
 util.readline.on("line", (line) => {
-
-    // filter new action taken too fast
-    if (global.interrupt) {
-        util.log("§1The currently active module is still stopping, please wait", "INFO", "MAIN");
-        return;
-    }
-
     // interrupt module on stop command
     if (line === "stop") {
         if (global.activeModule) {
