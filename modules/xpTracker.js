@@ -1,9 +1,9 @@
 
-const util = require("./../util.js");
+const util = require("../util.js");
 
 module.exports = {
     name: "xptracker",
-    description: "tracks the gained xp of players at high rate",
+    description: "tracks the gained GXP of players",
     syntax: '{-p <player1> [...players] | -g <guild name>}',
     examples: ['-p Salted HeyZeer0 Jumla', '-g Wynn Content Team, Wynncraft'],
     run: async function (args) {
@@ -79,17 +79,24 @@ module.exports = {
         }
 
         // run module
-        async function tick() {
-            // delayed self call
+        // delayed self call
+        let c = -1;
+        function tick () {
             if (global.activeModule !== "xptracker") {
                 util.log("§8Module Stopped!", "INFO", "modules/xptracker");
                 return;
             }
-            setTimeout(tick, 15000);
+            setTimeout(tick, 1000);
+            c = (c + 1) % 60;
+            if (c === 0) {
+                output();
+            }
+        }
 
-            /**
-             * execute tracker
-             */
+        /**
+         * execute tracker
+         */
+        async function output () {
             const now = Date.now();
 
             // request api
@@ -134,6 +141,7 @@ module.exports = {
                                 name: mem.name,
                                 uuid: mem.uuid,
                                 xp: [],
+                                xpAtSessionStart: mem.contributed,
                                 guild: guild
                             };
                             players.push(player);
@@ -165,19 +173,19 @@ module.exports = {
                 }
 
                 const string = `§2
-┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Players Tracked        ┃ ${players.length.toString().padEnd(62)} ┃
-┃ Time Since Last Update ┃                                                                ┃${guilds.reduce((p, c) =>
-                    p + `\n┃ - ${c.name.padEnd(20)} ┃ ${util.formatDuration(c.timestamps[c.timestamps.length - 1] - (c.timestamps[c.timestamps.length - 2] || 0), false, true).padEnd(62)} ┃`, "")}
-┣━━━━━━━━━━━━━━━━━━┳━━━━━╋━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┫
-┃      Player Name ┃ Tag ┃           Guild XP ┃      Minutely Rates ┃   10-Minute Average ┃
-┣━━━━━━━━━━━━━━━━━━╋━━━━━╋━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━┫${playersToDisplay.reduce((p, c) => {
+┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Players Tracked        ┃ ${players.length.toString().padEnd(80)} ┃
+┃ Time Since Last Update ┃                                                                                  ┃${guilds.reduce((p, c) => p + `
+┃ - ${c.name.padEnd(20)} ┃ ${util.formatDuration(c.timestamps[c.timestamps.length - 1] - (c.timestamps[c.timestamps.length - 2] || 0), false, true).padEnd(80)} ┃`, "")}
+┣━━━━━━━━━━━━━━━━━━┳━━━━━╋━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┫
+┃      Player Name ┃ Tag ┃     Total Guild XP ┃  Total GXP Gain ┃      Minutely Rates ┃   10-Minute Average ┃
+┣━━━━━━━━━━━━━━━━━━╋━━━━━╋━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━━┫${playersToDisplay.reduce((p, c) => {
                         const diff = c.guild.timestamps[c.guild.timestamps.length - 1] - (c.guild.timestamps[c.guild.timestamps.length - 2] || 0);
                         const currentSlope = Math.round((c.xp[c.xp.length - 1] - (c.xp[c.xp.length - 2] || 0)) / diff * 60000);
                         const tenMinuteAverage = Math.round((c.xp[c.xp.length - 1] - c.xp[0]) / (c.guild.timestamps[c.guild.timestamps.length - 1] - c.guild.timestamps[0]) * 60000);
-                        return p + `\n┃ ${c.name.padStart(16)} ┃ ${c.guild.tag.padEnd(4)}┃ ${util.formatNumber(c.xp[c.xp.length - 1]).padStart(18)} ┃ ${util.formatNumber(currentSlope).padStart(14)} XP/m ┃ ${util.formatNumber(tenMinuteAverage).padStart(14)} XP/m ┃`;
+                        return p + `\n┃ ${c.name.padStart(16)} ┃ ${c.guild.tag.padEnd(4)}┃ ${util.formatNumber(c.xp[c.xp.length - 1]).padStart(18)} ┃ ${util.formatNumber(c.xp[c.xp.length - 1] - c.xpAtSessionStart).padStart(15)} ┃ ${util.formatNumber(currentSlope).padStart(14)} XP/m ┃ ${util.formatNumber(tenMinuteAverage).padStart(14)} XP/m ┃`;
                     }, "")}
-┗━━━━━━━━━━━━━━━━━━┻━━━━━┻━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━┛`;
+┗━━━━━━━━━━━━━━━━━━┻━━━━━┻━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━┛`;
 
                 util.log(string, "INFO", "modules/xptracker");
             }
