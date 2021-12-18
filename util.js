@@ -217,16 +217,16 @@ const log = (message, type = "UNKNOWN", source = "UNKNOWN", override = false) =>
             "2": "\x1b[32m", // dark_green
             "3": "\x1b[33m", // dark_yellow
             "4": "\x1b[34m", // dark_blue
-            "5": "\x1b[35m", // dark_aqua
-            "6": "\x1b[36m", // dark_purple
+            "5": "\x1b[35m", // dark_purple
+            "6": "\x1b[36m", // dark_aqua
             "7": "\x1b[37m", // light_gray
             "8": "\x1b[90m", // dark_gray
             "9": "\x1b[91m", // light_red
             "a": "\x1b[92m", // light_green
             "b": "\x1b[93m", // light_yellow
             "c": "\x1b[94m", // light_blue
-            "d": "\x1b[95m", // light_aqua
-            "e": "\x1b[96m", // light_purple
+            "d": "\x1b[95m", // light_purple
+            "e": "\x1b[96m", // light_aqua
             "f": "\x1b[97m", // white
 
             "r": defaultTextColor // default and reset key
