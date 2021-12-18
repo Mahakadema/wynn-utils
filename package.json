@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Mahakadema/wynn-utils.git"
   },
   "author": "Mahakadema",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "bugs": {
     "url": "https://github.com/Mahakadema/wynn-utils/issues"
   },
